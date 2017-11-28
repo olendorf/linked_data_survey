@@ -1,2 +1,26 @@
-survey = read.csv('ld_results_final__for_rob_recoded_trimmed.csv', header = TRUE)
+###################
+## Automate package install and load
 
+is_installed <- function(package_name) is.element(package_name, installed.packages()[,1])
+
+# If a package is not installed, install it. Then load the package.
+install_and_load <- function(package_name) {
+  if(!is_installed(package_name)) {
+    install.packages(package_name)
+  }
+  library(package_name, character.only = TRUE)
+}
+
+install_packages <- function(packages) {
+  for(package in packages) {
+    install_and_load(package)
+  }
+}
+
+# Install and load libraries
+install_packages(c("dplyr", "tidytext", "readr", "ggplot2", "stringr"))
+
+survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
+tokenized_survey <- survey %>% unnest_tokens(description_word, linked_data_description)
+data("stop_words")
+tokenized_survey <- tokenized_survey %>% anti_join(stop_words, by = c("description_word" = "word"))
