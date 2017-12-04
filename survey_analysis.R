@@ -21,6 +21,24 @@ install_packages <- function(packages) {
 install_packages(c("dplyr", "tidytext", "readr", "ggplot2", "stringr"))
 
 survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
-tokenized_survey <- survey %>% unnest_tokens(description_word, linked_data_description)
+survey$combined_words <- paste(survey$linked_data_description, survey$linked_data_benefits, survey$additional_thoughts)
+tokenized_survey <- survey %>% unnest_tokens(word, combined_words)
 data("stop_words")
-tokenized_survey <- tokenized_survey %>% anti_join(stop_words, by = c("description_word" = "word"))
+tokenized_survey <- tokenized_survey %>% anti_join(stop_words)
+tokenized_survey <- tokenized_survey %>% inner_join(get_sentiments("bing"))
+tokenized_survey$bing_sentiment <- tokenized_survey$sentiment
+
+tokenized_survey$sentiment <- NULL
+
+tokenized_survey <- tokenized_survey %>% inner_join(get_sentiments("nrc"))
+tokenized_survey$nrc_sentiment <- tokenized_survey$sentiment
+
+tokenized_survey$sentiment <- NULL
+
+tokenized_survey <- tokenized_survey %>% inner_join(get_sentiments("afinn"))
+tokenized_survey$afinn_sentiment <- tokenized_survey$score
+
+tokenized_survey$score <- NULL
+
+
+
