@@ -18,10 +18,49 @@ install_packages <- function(packages) {
 }
 
 # Install and load libraries
-install_packages(c("dplyr", "tidytext", "readr", "ggplot2", "stringr"))
+install_packages(c("dplyr", "tidytext", "readr", "ggplot2", "stringr", "dataMeta"))
 
 # Load the data
 survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
+
+# [1] "start_date"                  "end_date"                    "response_type"              
+# [4] "progress"                    "duration"                    "finished"                   
+# [7] "date_recorded"               "response_id"                 "work_area"                  
+# [10] "work_area_other_explanation" "work_area_merged"            "linked_data_description"    
+# [13] "description_quality"         "description_opinion"         "linked_data_benefits"       
+# [16] "benefits_quality"            "benefits_score"              "additional_thoughts"        
+# [19] "combined_words" 
+
+column_types <- c(0, 0, 0, 
+                  0, 0, 1, 
+                  0, 0, 1,
+                  0, 1, 0, 
+                  0, 0, 0, 
+                  0, 0, 0, 
+                  0)
+
+column_descriptions <- c("Date the survey was started",
+                         "Date the survey was completed",
+                         "Where the survey was filled out [IP Address = web]",
+                         "Percentage of the survey completed",
+                         "The time taken to complete the survey in seconds",
+                         "If the survey was completed",
+                         "Date the survey was completed",
+                         "Unique anonymous identifier for the response",
+                         "Respondants area of work",
+                         "Explanation of other response in work area",
+                         "Recoded work area to group like explanations",
+                         "Respondants description of what linked data is to a non expert",
+                         "Quality of the descriptiong scored independently by the authors",
+                         "If the respondant was postive, negative or neutral towards linked data, estimated by the authors",
+                         "Respondants description of the benefits of linked data",
+                         "The quality of the benefits answer, scored indepenently by the authors",
+                         "If the respondants felt linked data was beneficial, not beneficial or neutral",
+                         "Respondants can add additional comments",
+                         "The three text responsed, linked_data_description, linked_data_benefits and additional_thoughts combined"
+                         )
+
+
 
 # Mush all th etext columns together to increase power
 survey$combined_words <- paste(survey$linked_data_description, survey$linked_data_benefits, survey$additional_thoughts)
