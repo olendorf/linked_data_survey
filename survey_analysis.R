@@ -17,8 +17,12 @@ install_packages <- function(packages) {
   }
 }
 
+
+
 # Install and load libraries
-install_packages(c("dplyr", "tidytext", "readr", "ggplot2", "stringr"))
+install_packages(c("devtools", "slam", "dplyr", "tidytext", "readr", "ggplot2", "stringr", "topicmodels"))
+
+
 
 # Load the data
 survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
@@ -66,6 +70,14 @@ bing_word_counts %>%
   labs(y = "Contribution to sentiment",
        x = NULL) +
   coord_flip()
+
+
+#####
+#
+# Topic Modeling
+#
+#####
+
 
 
 
