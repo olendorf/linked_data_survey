@@ -36,6 +36,15 @@ tokenized_survey <- survey %>% unnest_tokens(word, combined_words)
 
 # Remove stop words and join
 data("stop_words")
+
+# new_stops = c(
+#   "data",
+#   "linked",
+#   "information",
+#   "library",
+#   "libraries",
+#   "users"
+# )
 tokenized_survey <- tokenized_survey %>% anti_join(stop_words)
 
 
@@ -82,12 +91,18 @@ bing_word_counts %>%
 
 
 
-frequencies <- tokenized_survey %>% 
+word_counts <- tokenized_survey %>% 
                group_by(response_id) %>% 
                count(word, sort = TRUE) %>% 
                left_join(tokenized_survey %>% 
                group_by(response_id) %>% 
                summarise(total = n()))
+
+word_counts_dtm <- word_counts %>% cast_dtm(response_id, word, n)
+
+responses_lda <- LDA(word_counts_dtm, k = 4, control = list(seed = 1234))
+
+survey_topics <- tidy(responses_lda, matrix = "beta")
 
 top_terms <- survey_topics %>% group_by(topic) %>%
 top_n(10, beta) %>%
