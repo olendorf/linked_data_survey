@@ -20,12 +20,13 @@ install_packages <- function(packages) {
 
 
 # Install and load libraries
-install_packages(c("devtools", "slam", "dplyr", "tidytext", "readr", "ggplot2", "stringr", "topicmodels"))
 
+install_packages(c("topicmodels", "dplyr", "tidytext", "readr", "ggplot2", "stringr", "dataMeta"))
 
 
 # Load the data
 survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
+
 
 # Mush all th etext columns together to increase power
 survey$combined_words <- paste(survey$linked_data_description, survey$linked_data_benefits, survey$additional_thoughts)
@@ -79,6 +80,27 @@ bing_word_counts %>%
 #####
 
 
+
+
+frequencies <- tokenized_survey %>% 
+               group_by(response_id) %>% 
+               count(word, sort = TRUE) %>% 
+               left_join(tokenized_survey %>% 
+               group_by(response_id) %>% 
+               summarise(total = n()))
+
+top_terms <- survey_topics %>% group_by(topic) %>%
+top_n(10, beta) %>%
+ungroup() %>%
+arrange(topic, -beta)
+
+
+top_terms %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip()
 
 
 

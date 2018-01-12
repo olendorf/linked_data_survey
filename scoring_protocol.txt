@@ -1,0 +1,23 @@
+description_quality: The overall quality of the respondants description of linked data. 
+The description was supposed to be for non experts. Scored using the following critera. 
+Some interpreatation of answers is allowed, so they may not say exactly what the criteria suggests, but imply it.
+
+        +1 - mentions URI or unique identifier
+        +1 - mentions predicate or differentiate from typical link
+        +1 - allows linking data previous unable to link based on URI
+        +1 - additional point for other things not mentioned.
+
+description_opinion: The respondants apparent attitude toward or against linked data.
+
+        1 - positive attitude towards linked data
+        0 - neutral
+        -1 - negative attitude towards linked data
+        
+benefits_quality: The general quality of the explanation of the benefits of linked data. This is a bit more amorphous. 
+
+        +1 - For good examples
+        +1 - Disambiguation
+        +1 - Linking otherwise unlinked
+        +1 - Additional good thoughts
+        
+benefits_opinion: pretty much the same as the previous opinion.
