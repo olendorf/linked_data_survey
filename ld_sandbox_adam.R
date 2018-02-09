@@ -66,3 +66,8 @@ freq_by_rank %>%
 benefits_words <- benefits_words %>%
   bind_tf_idf(word, response_id, n)
 benefits_words
+
+
+benefits_words %>%
+  select(-total) %>%
+  arrange(desc(tf_idf))
