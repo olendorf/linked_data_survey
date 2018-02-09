@@ -56,3 +56,13 @@ freq_by_rank <- benefits_words %>%
 
 freq_by_rank
 
+freq_by_rank %>% 
+  ggplot(aes(rank, `term frequency`, color = response_id)) + 
+  geom_line(size = 1.1, alpha = 0.8, show.legend = FALSE) + 
+  scale_x_log10() +
+  scale_y_log10()
+
+
+benefits_words <- benefits_words %>%
+  bind_tf_idf(word, response_id, n)
+benefits_words
