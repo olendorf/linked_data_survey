@@ -18,7 +18,7 @@ install_packages <- function(packages) {
 }
 
 # Install and load libraries
-install_packages(c("topicmodels", "dplyr", "tidytext", "readr", "ggplot2", "stringr", "dataMeta"))
+install_packages(c("topicmodels", "dplyr", "tidytext", "readr", "ggplot2", "stringr"))
 
 # Load the data
 survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
@@ -40,16 +40,10 @@ tokenized_survey <- tokenized_survey %>% anti_join(stop_words)
 # for the other sentiment measure.
 tokenized_survey_nrc <- tokenized_survey %>% inner_join(get_sentiments("nrc"))
 
-# The rest can just go in to the main data frame.
-tokenized_survey <- tokenized_survey %>% inner_join(get_sentiments("bing"))
-tokenized_survey$bing_sentiment <- tokenized_survey$sentiment
+tokenized_survey_bing <- tokenized_survey %>% inner_join(get_sentiments("bing"))
 
-tokenized_survey$sentiment <- NULL
 
-tokenized_survey <- tokenized_survey %>% inner_join(get_sentiments("afinn"))
-tokenized_survey$afinn_sentiment <- tokenized_survey$score
-
-tokenized_survey$score <- NULL
+tokenized_survey_afinn <- tokenized_survey %>% inner_join(get_sentiments("afinn"))
 
 
 bing_word_counts <- tokenized_survey %>% 
@@ -69,24 +63,61 @@ bing_word_counts %>%
   coord_flip()
 
 
+###nrc  topic modeling
+
+nrc_word_counts <-  tokenized_survey_nrc %>% 
+  group_by(response_id) %>% 
+  count(sentiment, sort = TRUE) %>% 
+  left_join(tokenized_survey_nrc %>% 
+              group_by(response_id) %>% 
+              summarise(total = n()))
+
+nrc_word_counts_dtm <- nrc_word_counts %>% cast_dtm(response_id, sentiment, n)
+nrc_responses_lda <- LDA(nrc_word_counts_dtm, k = 4, control = list(seed = 1234))
+nrc_survey_topics <- tidy(nrc_responses_lda, matrix = "beta")
+
+nrc_top_terms <- nrc_survey_topics %>% group_by(topic) %>%
+  top_n(5, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+
+nrc_top_terms %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip()
+
+
+
 ###
 # 
 # Topic modeling
 #
 ###
+word <- c('library', 'libraries', 'information', 'link', 'data', 'linked', 'na', '2')
+custom_stops <- data.frame(word)
+custom_stops$lexicon <- 'custom'
+
+topic_survey <- tokenized_survey %>% anti_join(custom_stops)
 
 
-frequencies <- tokenized_survey %>% 
+word_counts <- topic_survey %>% 
                group_by(response_id) %>% 
                count(word, sort = TRUE) %>% 
-               left_join(tokenized_survey %>% 
+               left_join(topic_survey %>% 
                group_by(response_id) %>% 
                summarise(total = n()))
 
+word_counts_dtm <- word_counts %>% cast_dtm(response_id, word, n)
+responses_lda <- LDA(word_counts_dtm, k = 4, control = list(seed = 1234))
+survey_topics <- tidy(responses_lda, matrix = "beta")
+
 top_terms <- survey_topics %>% group_by(topic) %>%
-top_n(10, beta) %>%
-ungroup() %>%
-arrange(topic, -beta)
+  top_n(10, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
 
 
 top_terms %>%
@@ -95,5 +126,8 @@ top_terms %>%
   geom_col(show.legend = FALSE) +
   facet_wrap(~ topic, scales = "free") +
   coord_flip()
+
+
+
 
 
