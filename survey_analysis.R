@@ -23,41 +23,26 @@ install_packages(c("topicmodels", "dplyr", "tidytext", "readr", "ggplot2", "stri
 
 
 # Load the data
-survey = read_csv('ld_results_final__for_rob_recoded_trimmed.csv', col_names = TRUE)
-
-
-# Mush all th etext columns together to increase power
-survey$combined_words <- paste(survey$linked_data_description, survey$linked_data_benefits, survey$additional_thoughts)
-
-# Tokenize the words
-tokenized_survey <- survey %>% unnest_tokens(word, combined_words)
+sanitized_survey = read_csv(
+  'sanitized_survey.csv', col_names = TRUE)
 
 # Remove stop words and join
 data("stop_words")
-
-# new_stops = c(
-#   "data",
-#   "linked",
-#   "information",
-#   "library",
-#   "libraries",
-#   "users"
-# )
-tokenized_survey <- tokenized_survey %>% anti_join(stop_words)
+sanitized_survey <- sanitized_survey %>% anti_join(stop_words)
 
 
 # NRC changes the structre a bit since each word in the word column can get 
 # multiple NRC sentiments. Making a new dataframe makes it a little easier
 # for the other sentiment measure.
-tokenized_survey_nrc <- tokenized_survey %>% inner_join(get_sentiments("nrc"))
+sanitized_survey_nrc <- sanitized_survey %>% inner_join(get_sentiments("nrc"))
 
-tokenized_survey_bing <- tokenized_survey %>% inner_join(get_sentiments("bing"))
-
-
-tokenized_survey_afinn <- tokenized_survey %>% inner_join(get_sentiments("afinn"))
+sanitized_survey_bing <- sanitized_survey %>% inner_join(get_sentiments("bing"))
 
 
-bing_word_counts <- tokenized_survey_bing %>% 
+sanitized_survey_afinn <- sanitized_survey %>% inner_join(get_sentiments("afinn"))
+
+
+bing_word_counts <- sanitized_survey_bing %>% 
   count(word, sentiment, sort = TRUE) %>%
   ungroup()
 
@@ -76,10 +61,10 @@ bing_word_counts %>%
 
 ###nrc  topic modeling
 
-nrc_word_counts <-  tokenized_survey_nrc %>% 
+nrc_word_counts <-  sanitized_survey_nrc %>% 
   group_by(response_id) %>% 
   count(sentiment, sort = TRUE) %>% 
-  left_join(tokenized_survey_nrc %>% 
+  left_join(sanitized_survey_nrc %>% 
               group_by(response_id) %>% 
               summarise(total = n()))
 
@@ -111,9 +96,9 @@ word <- c('library', 'libraries', 'information', 'link', 'data', 'linked', 'na',
 custom_stops <- data.frame(word)
 custom_stops$lexicon <- 'custom'
 
-topic_survey <- tokenized_survey %>% anti_join(custom_stops)
+topic_survey <- sanitized_survey %>% anti_join(custom_stops)
 
-word_counts <- tokenized_survey %>% 
+word_counts <- sanitized_survey %>% 
                group_by(response_id) %>% 
                count(word, sort = TRUE) %>% 
                left_join(topic_survey %>% 
