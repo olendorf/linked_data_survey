@@ -1,14 +1,10 @@
-##
-# Suggested fields are in all caps. A description of the intended information
-# is inside. All fields are optional, but for practical purposes
-# Title and Creators should always be included. Most of the other fields are
-# HIGHLY recommended.
-
-TITLE: Title of the data set
+## Title of the data set
 
 
-CREATORS: List of people that can be considered creators of the data set (Name, email, role, institution)
+##CREATORS:
+
     Random Citizen <random@example.com> PI, University of Null
+    
     Post Doc <post@examplec.com> CO-PI, Null State University
     
     
