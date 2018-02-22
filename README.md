@@ -1,28 +1,28 @@
 ## Title of the data set
 
-## CREATORS:
+### CREATORS:
 
     Random Citizen <random@example.com> PI, University of Null
     
     Post Doc <post@examplec.com> CO-PI, Null State University
     
     
-## CONTRIBUTORS: 
+### CONTRIBUTORS: 
 
 List of people who have contributes. (Name, email, role, institution)
 
 
-## PROJECT DATES
+### PROJECT DATES
 
 Date range for when the project occurred.
 
 
-## PROJECT DESCRIPTION:  
+### PROJECT DESCRIPTION:  
 
 A description of the project associated with the data. What was the goal of the project? Briefly describe methods.
 
 
-## DATA DESCRIPTION:
+### DATA DESCRIPTION:
 
 The data are derived from surveys sent to a variety of library workers using Qualitrix. 
 The survey results are not provided due to privacy concerns. In the interest of openness,
@@ -30,14 +30,14 @@ we provide the sanitized data in the form of words used by the respondants. The 
 `sanitize.R` was used to sanitize the data and is provided along with the sanitized data
 in `sanitized_survey.R`. See provided data dictionary for more detail about the data.
     
-## REQUIRED SOFTWARE:
+### REQUIRED SOFTWARE:
 
 R version 3.4.3 or more recent to run the analyses
     
 Any viewer capable of reading CSV files (e.g. Excel)
 
 
-## USAGE:
+### USAGE:
 To run the the analyses, run the `survey_analysis.R` script. From the R console
     
 ```R
@@ -45,7 +45,7 @@ source('~/r_projects/linked_data_survey/sanitize.R')
 ```
 
 
-# FILE MANIFEST or DATA STRUCTURE
+### FILE MANIFEST or DATA STRUCTURE
     
 data sets with just a few files, list the files and briefly describe them.
    
@@ -56,7 +56,7 @@ For data sets with lots of files, it is better to arrange your files in a direct
 structure and describe the directory structure.
 
 
-## CITATION: 
+### CITATION: 
 
 If this data is used in a publication, please cite the following:
     
@@ -64,7 +64,7 @@ Random Citizen and Post Doc "Cool Genomic Data", 2016. DOI: doi:10.1000/182
     
 AND/OR provide a reference to an appropriate publication.
     
-## LICENSING: 
+### LICENSING: 
     
 Creative Commons Attribution 4.0 International
     
